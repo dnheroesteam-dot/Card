@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可爱灵兽翻牌游戏（2025冬季模拟）</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a1f3a url('https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/bg.a805082e.png') center/cover no-repeat;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            margin: 20px 0;
+            font-size: 28px;
+            text-shadow: 0 0 10px rgba(255,215,0,0.8);
+        }
+        .game-container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(255,215,255,0.3);
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .card {
+            position: relative;
+            width: 100%;
+            padding-bottom: 120%; /* 保持比例 */
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .card.flip {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            backface-visibility: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            background: center/cover no-repeat;
+        }
+        .card-front {
+            background-image: url('https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/card.16ba9dfc.png');
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            background-size: contain;
+            background-color: #000;
+        }
+        .info {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+        .reward {
+            font-size: 22px;
+            color: gold;
+            margin: 15px 0;
+            min-height: 30px;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 18px;
+            background: linear-gradient(#ff6b35, #f7931e);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .game-over {
+            font-size: 26px;
+            color: #ff4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>可爱灵兽翻牌</h1>
+    <div class="game-container">
+        <div class="info">翻开吉兽牌越多，奖励越丰厚！<br>小心凶兽（饕餮、穷奇），翻到就结束哦~</div>
+        
+        <div class="cards" id="cards"></div>
+        
+        <div class="reward" id="reward">当前已翻开 <span id="count">0</span> 张吉兽牌</div>
+        
+        <div class="info">
+            <button onclick="startGame()">开始新游戏</button>
+        </div>
+    </div>
+
+    <script>
+        // 灵兽定义（ID 对应代码中的顺序）
+        const beasts = [
+            { id: 1, name: "青龙",      img: "qinglong_card.ff01fb86.png" },
+            { id: 2, name: "朱雀",      img: "zhuque_card.4b9ced89.png" },
+            { id: 3, name: "玄武",      img: "xuanwu_card.b2e4cdee.png" },
+            { id: 4, name: "白虎",      img: "baihu_card.1ff75589.png" },
+            { id: 5, name: "麒麟",      img: "qilin_card.ad7cf296.png" },
+            { id: 6, name: "白泽",      img: "baize_card.dbf1c8fd.png" },
+            { id: 7, name: "乘黄",      img: "chenghuang_card.7ecf516d.png" },
+            { id: 8, name: "饕餮（凶）",img: "taotie_card.db2219a5.png" },
+            { id: 9, name: "穷奇（凶）",img: "qiongqi_card.5838411c.png" }
+        ];
+
+        const baseUrl = "https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/";
+
+        // 奖励表
+        const rewards = [
+            { count: 0, name: "破壳萌龙",     value: "50电池" },
+            { count: 1, name: "破壳萌龙",     value: "50电池" },
+            { count: 2, name: "软鳞初醒",     value: "200电池" },
+            { count: 3, name: "茸角探头",     value: "500电池" },
+            { count: 4, name: "云间嬉戏",     value: "1200电池" },
+            { count: 5, name: "沐风吟游",     value: "3000电池" },
+            { count: 6, name: "碧海弄潮",     value: "8000电池" },
+            { count: 7, name: "星梦守护",     value: "30000电池！" }
+        ];
+
+        let currentCards = [];
+        let flippedGood = 0;
+        let gameOver = false;
+
+        function startGame() {
+            // 随机打乱9张牌
+            currentCards = [...beasts].sort(() => Math.random() - 0.5);
+            flippedGood = 0;
+            gameOver = false;
+
+            const cardsContainer = document.getElementById('cards');
+            cardsContainer.innerHTML = '';
+
+            currentCards.forEach((beast, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.index = index;
+
+                const front = document.createElement('div');
+                front.classList.add('card-front');
+
+                const back = document.createElement('div');
+                back.classList.add('card-back');
+                back.style.backgroundImage = `url(${baseUrl}${beast.img})`;
+
+                card.appendChild(front);
+                card.appendChild(back);
+                card.onclick = () => flipCard(card, beast, index);
+
+                cardsContainer.appendChild(card);
+            });
+
+            updateReward();
+        }
+
+        function flipCard(cardElement, beast, index) {
+            if (cardElement.classList.contains('flip') || gameOver) return;
+
+            cardElement.classList.add('flip');
+
+            if (beast.id <= 7) {
+                // 吉兽
+                flippedGood++;
+                updateReward();
+            } else {
+                // 凶兽，游戏结束
+                gameOver = true;
+                setTimeout(() => {
+                    alert(`不幸翻到凶兽【${beast.name}】！\n本局结束，仅获得安慰奖：破壳萌龙 (50电池)`);
+                    document.getElementById('reward').innerHTML = `<span class="game-over">游戏结束！仅获得安慰奖</span>`;
+                }, 800);
+            }
+        }
+
+        function updateReward() {
+            const countSpan = document.getElementById('count');
+            const rewardDiv = document.getElementById('reward');
+
+            countSpan.textContent = flippedGood;
+
+            const reward = rewards.find(r => r.count === flippedGood) || rewards[rewards.length-1];
+            
+            if (flippedGood === 7) {
+                rewardDiv.innerHTML = `恭喜集齐7吉兽！获得最高奖励：<br><strong style="font-size:28px;color:gold;">${reward.name} (${reward.value})</strong>`;
+            } else {
+                const next = rewards[flippedGood + 1];
+                rewardDiv.innerHTML = `
+                    当前奖励：${reward.name} (${reward.value})<br>
+                    再翻开1张吉兽牌，可获得：<strong>${next.name} (${next.value})</strong>
+                `;
+            }
+        }
+
+        // 页面加载完成自动开始一局
+        window.onload = startGame;
+    </script>
+</body>
+</html>

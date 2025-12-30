@@ -8,7 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: #0a1f3a url('https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/bg.a805082e.png') center/cover no-repeat;
+            background: #0a1f3a url('https://corsproxy.io/?https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/bg.a805082e.png') center/cover no-repeat;
             font-family: 'Microsoft YaHei', Arial, sans-serif;
             color: white;
             min-height: 100vh;
@@ -56,7 +56,7 @@
             background: center/cover no-repeat;
         }
         .card-front {
-            background-image: url('https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/card.16ba9dfc.png');
+            background-image: url('https://corsproxy.io/?https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/card.16ba9dfc.png');
         }
         .card-back {
             transform: rotateY(180deg);
@@ -72,7 +72,7 @@
             font-size: 22px;
             color: gold;
             margin: 15px 0;
-            min-height: 30px;
+            min-height: 50px;
         }
         button {
             padding: 12px 30px;
@@ -109,7 +109,7 @@
     </div>
 
     <script>
-        // 灵兽定义（ID 对应代码中的顺序）
+        // 靈獸定義
         const beasts = [
             { id: 1, name: "青龙",      img: "qinglong_card.ff01fb86.png" },
             { id: 2, name: "朱雀",      img: "zhuque_card.4b9ced89.png" },
@@ -122,7 +122,10 @@
             { id: 9, name: "穷奇（凶）",img: "qiongqi_card.5838411c.png" }
         ];
 
-        const baseUrl = "https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/";
+        // 使用 corsproxy.io 代理所有圖片
+        const proxy = "https://corsproxy.io/?";
+        const originalBase = "https://i1.hdslb.com/bfs/live-activity/nuwa/bls_winter_2025/static/img/";
+        const baseUrl = proxy + originalBase;
 
         // 奖励表
         const rewards = [
@@ -201,7 +204,7 @@
             if (flippedGood === 7) {
                 rewardDiv.innerHTML = `恭喜集齐7吉兽！获得最高奖励：<br><strong style="font-size:28px;color:gold;">${reward.name} (${reward.value})</strong>`;
             } else {
-                const next = rewards[flippedGood + 1];
+                const next = rewards[flippedGood + 1] || reward;
                 rewardDiv.innerHTML = `
                     当前奖励：${reward.name} (${reward.value})<br>
                     再翻开1张吉兽牌，可获得：<strong>${next.name} (${next.value})</strong>

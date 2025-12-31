@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>可愛靈獸翻牌遊戲（無框線版）</title>
+    <title>BiliBili 萌兽卡牌 (模拟)</title>
     <style>
         body {
             margin: 0;
@@ -54,7 +54,7 @@
             border-radius: 12px;
             backface-visibility: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            border: none; /* 移除所有邊框 */
+            border: none; /* 移除所有边框 */
         }
         .card-front {
             background: #2a3a5a url('images/card.16ba9dfc.png') center/cover no-repeat;
@@ -110,40 +110,40 @@
 </head>
 <body>
 
-    <h1>✨ 可愛靈獸翻牌遊戲 ✨</h1>
+    <h1>✨ BiliBili 萌兽卡牌 (模拟) ✨</h1>
 
     <div class="game-container">
-        <div class="info">目標：翻開全部 7 張吉獸牌而不觸碰凶獸！</div>
+        <div class="info">目标：翻开全部 7 张灵兽牌而不触碰凶兽！</div>
         
         <div class="cards" id="cards"></div>
         
         <div id="reward" class="reward"></div>
 
-        <button onclick="startGame()">開始新遊戲</button>
+        <button onclick="startGame()">开始新游戏</button>
     </div>
 
     <script>
         const beasts = [
-            { id: 1, name: "青龍", img: "qinglong_card.ff01fb86.png" },
+            { id: 1, name: "青龙", img: "qinglong_card.ff01fb86.png" },
             { id: 2, name: "朱雀", img: "zhuque_card.4b9ced89.png" },
             { id: 3, name: "玄武", img: "xuanwu_card.b2e4cdee.png" },
             { id: 4, name: "白虎", img: "baihu_card.1ff75589.png" },
             { id: 5, name: "麒麟", img: "qilin_card.ad7cf296.png" },
-            { id: 6, name: "白澤", img: "baize_card.dbf1c8fd.png" },
-            { id: 7, name: "乘黃", img: "chenghuang_card.7ecf516d.png" },
+            { id: 6, name: "白泽", img: "baize_card.dbf1c8fd.png" },
+            { id: 7, name: "乘黄", img: "chenghuang_card.7ecf516d.png" },
             { id: 8, name: "饕餮（凶）", img: "taotie_card.db2219a5.png" },
-            { id: 9, name: "窮奇（凶）", img: "qiongqi_card.5838411c.png" }
+            { id: 9, name: "穷奇（凶）", img: "qiongqi_card.5838411c.png" }
         ];
 
         const rewards = [
-            { count: 0, name: "尚未獲得", value: "0" },
-            { count: 1, name: "破殼萌龍", value: "50電池" },
-            { count: 2, name: "軟鱗初醒", value: "200電池" },
-            { count: 3, name: "茸角探頭", value: "500電池" },
-            { count: 4, name: "雲間嬉戲", value: "1200電池" },
-            { count: 5, name: "沐風吟遊", value: "3000電池" },
-            { count: 6, name: "碧海弄潮", value: "8000電池" },
-            { count: 7, name: "星夢守護", value: "30000電池！" }
+            { count: 0, name: "尚未获得", value: "0" },
+            { count: 1, name: "破壳萌龙", value: "50电池" },
+            { count: 2, name: "软鳞初醒", value: "200电池" },
+            { count: 3, name: "茸角探头", value: "500电池" },
+            { count: 4, name: "云间嬉戏", value: "1200电池" },
+            { count: 5, name: "沐风吟游", value: "3000电池" },
+            { count: 6, name: "碧海弄潮", value: "8000电池" },
+            { count: 7, name: "星梦守护", value: "30000电池！" }
         ];
 
         const baseUrl = "images/";
@@ -198,7 +198,7 @@
                     gameOver = true;
                     updateReward();
                     setTimeout(() => {
-                        alert("🎉 太強了！你集齊了所有吉獸，獲得 30000 電池！");
+                        alert("🎉 太强了！你集齐了所有灵兽，获得 30000 电池！");
                     }, 600);
                 } else {
                     updateReward();
@@ -208,7 +208,7 @@
                 updateReward();
                 setTimeout(() => {
                     revealAll();
-                    alert(`💀 糟糕！你翻到了 ${beast.name}，遊戲結束！`);
+                    alert(`💀 糟糕！你翻到了 ${beast.name}，游戏结束！`);
                 }, 600);
             }
         }
@@ -218,15 +218,15 @@
             const current = rewards[flippedGood];
             
             if (flippedGood === 7) {
-                rewardDiv.innerHTML = `<div class="game-win">恭喜通關！</div>獲得最高獎勵：${current.name} (${current.value})`;
+                rewardDiv.innerHTML = `<div class="game-win">恭喜通关！</div>获得最高奖励：${current.name} (${current.value})`;
             } else if (gameOver) {
-                rewardDiv.innerHTML = `<div class="game-over">遊戲結束</div>獲得安慰獎勵：破殼萌龍 (50電池)`;
+                rewardDiv.innerHTML = `<div class="game-over">游戏结束</div>获得安慰奖励：破壳萌龙 (50电池)`;
             } else {
                 const next = rewards[flippedGood + 1];
                 rewardDiv.innerHTML = `
-                    目前已翻開：${flippedGood} 張吉獸<br>
-                    當前獎勵：${current.name} (${current.value})<br>
-                    下一階獎勵：<strong>${next.name} (${next.value})</strong>
+                    目前已翻开：${flippedGood} 张灵兽<br>
+                    当前奖励：${current.name} (${current.value})<br>
+                    下一阶奖励：<strong>${next.name} (${next.value})</strong>
                 `;
             }
         }
